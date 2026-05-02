@@ -3,7 +3,7 @@ import { ref, watch, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 import logoBlack from '@/assets/jonosrot-main-b.png'
-import logoWhite from '@/assets/jonosrot-main-w.png'
+import logoWhite from '@/assets/jonosrot-main-w-1.png'
 
 const router = useRouter()
 const route = useRoute()
@@ -29,32 +29,25 @@ const navItems: NavItem[] = [
     inactiveImg: logoWhite
   },
   {
-    id: 'reels',
-    label: 'Reels',
+    id: 'trends',
+    label: 'Trends',
     path: '/reels',
-    outlineIcon: 'M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z M4 6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h11V6H4z',
-    filledIcon: 'M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z M4 6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h11V6H4z'
+    outlineIcon: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z',
+    filledIcon: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z'
   },
   {
     id: 'notification',
-    label: 'Alerts',
+    label: 'Notification',
     path: '/notifications',
     outlineIcon: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0',
     filledIcon: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0'
   },
   {
-    id: 'social',
-    label: 'Social',
-    path: '/social',
-    outlineIcon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
-    filledIcon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75'
-  },
-  {
-    id: 'profile',
-    label: 'Menu',
+    id: 'me',
+    label: 'Me',
     path: '/profile',
-    outlineIcon: 'M4 6h16 M4 12h16 M4 18h16',
-    filledIcon: 'M4 6h16 M4 12h16 M4 18h16'
+    outlineIcon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+    filledIcon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z'
   }
 ]
 
@@ -77,34 +70,75 @@ const navigate = (item: NavItem, index: number) => {
  * Computed SVG path that creates the curved bar shape
  * with a concave notch that tracks the active item.
  */
+// const navBarPath = computed(() => {
+//   const count = navItems.length
+//   const totalW = 500
+//   const itemW = totalW / count
+//   const cx = itemW * activeIndex.value + itemW / 2
+
+//   const barTop = 16
+//   const r = 18 // Matching the rounded corners from demo
+
+//   // ━━━ Liquid Notch Configuration ━━━
+//   const halfW = 60      // Total notch width is ~112px
+//   const depth = 28      // Depth of the dip
+
+//   const leftEdge = cx - halfW
+//   const rightEdge = cx + halfW
+//   const bottomY = barTop + depth
+
+//   return [
+//     `M 0 ${barTop + r}`,
+//     `A ${r} ${r} 0 0 1 ${r} ${barTop}`,
+
+//     // 1. Straight line to the start of the notch
+//     `H ${leftEdge}`,
+
+//     // 2. LEFT CURVE: Dips down to the center.
+//     // The first control point (leftEdge + 14) pulls horizontally to keep the entry smooth.
+//     // The second control point (cx - 18) flattens the curve as it hits the bottom.
+//     `C ${leftEdge + 14} ${barTop}, ${cx - 18} ${bottomY}, ${cx} ${bottomY}`,
+
+//     // 3. RIGHT CURVE: Rises back to the top edge.
+//     // Perfectly mirrors the left curve.
+//     `C ${cx + 18} ${bottomY}, ${rightEdge - 14} ${barTop}, ${rightEdge} ${barTop}`,
+
+//     // 4. Straight line to the right end
+//     `H ${totalW - r}`,
+//     `A ${r} ${r} 0 0 1 ${totalW} ${barTop + r}`,
+
+//     // Close the shape
+//     `V 80 H 0 Z`
+//   ].join(' ')
+// })
 const navBarPath = computed(() => {
   const count = navItems.length
   const totalW = 500
   const itemW = totalW / count
   const cx = itemW * activeIndex.value + itemW / 2
 
-  // Notch sized to hug the 46px circle (radius 23px) with ~3px gap
-  const notchR = 32
-  const curveW = 12
-  const barTop = 18
+  // Wider notch for generous horizontal spacing around the circle
+  const notchR = 36
+  const curveW = 18
+  const barTop = 15
 
   const leftStart = cx - notchR - curveW
   const leftEnd = cx - notchR
   const rightStart = cx + notchR
   const rightEnd = cx + notchR + curveW
 
-  const r = 10 // top corner radius
+  const r = 12 // top corner radius
 
   return [
     `M 0 ${barTop + r}`,
     `A ${r} ${r} 0 0 1 ${r} ${barTop}`,
     `H ${leftStart}`,
-    // Smooth entry curve into the semicircle
-    `C ${leftStart + curveW * 0.65} ${barTop}, ${leftEnd} ${barTop}, ${leftEnd} ${barTop + 4}`,
-    // Full semicircular arc (sweep the full half-circle)
-    `A ${notchR} ${notchR} 0 0 0 ${rightStart} ${barTop + 4}`,
-    // Smooth exit curve out of the semicircle
-    `C ${rightStart} ${barTop}, ${rightEnd - curveW * 0.65} ${barTop}, ${rightEnd} ${barTop}`,
+    // Gentle entry curve — wide and smooth
+    `C ${leftStart + curveW * 0.6} ${barTop}, ${leftEnd + 4} ${barTop}, ${leftEnd} ${barTop + 6}`,
+    // Semicircular arc across the notch
+    `A ${notchR} ${notchR} 0 0 0 ${rightStart} ${barTop + 6}`,
+    // Gentle exit curve — mirror of entry
+    `C ${rightStart - 6} ${barTop}, ${rightEnd - curveW * 0.7} ${barTop}, ${rightEnd} ${barTop}`,
     `H ${totalW - r}`,
     `A ${r} ${r} 0 0 1 ${totalW} ${barTop + r}`,
     `V 80 H 0 Z`
@@ -311,11 +345,11 @@ const navBarPath = computed(() => {
 }
 
 .bottom-nav__img--inactive {
-  opacity: 0.55;
+  opacity: 1;
 }
 
 .bottom-nav__btn:not(.is-active):hover .bottom-nav__img {
-  opacity: 0.85;
+  opacity: 0.80;
 }
 
 /* Hover for inactive */

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import logoLong from '@/assets/jonosrot-long-02.png'
 
 const isMenuOpen = ref(false)
 
@@ -24,21 +25,13 @@ const navItems = [
     <div class="top-nav__inner">
       <!-- Logo -->
       <RouterLink to="/" class="top-nav__logo">
-        <div class="top-nav__logo-icon">
-          <span>জ</span>
-        </div>
-        <span class="top-nav__logo-text">Jonosrot</span>
+        <img :src="logoLong" alt="Jonosrot" class="top-nav__logo-img" />
       </RouterLink>
 
       <!-- Desktop Navigation -->
       <div class="top-nav__links">
-        <RouterLink
-          v-for="item in navItems"
-          :key="item.name"
-          :to="item.path"
-          class="top-nav__link"
-          active-class="top-nav__link--active"
-        >
+        <RouterLink v-for="item in navItems" :key="item.name" :to="item.path" class="top-nav__link"
+          active-class="top-nav__link--active">
           {{ item.name }}
         </RouterLink>
       </div>
@@ -58,23 +51,12 @@ const navItems = [
     </div>
 
     <!-- Mobile Navigation -->
-    <transition
-      enter-active-class="mobile-enter-active"
-      enter-from-class="mobile-enter-from"
-      enter-to-class="mobile-enter-to"
-      leave-active-class="mobile-leave-active"
-      leave-from-class="mobile-leave-from"
-      leave-to-class="mobile-leave-to"
-    >
+    <transition enter-active-class="mobile-enter-active" enter-from-class="mobile-enter-from"
+      enter-to-class="mobile-enter-to" leave-active-class="mobile-leave-active" leave-from-class="mobile-leave-from"
+      leave-to-class="mobile-leave-to">
       <div v-if="isMenuOpen" class="top-nav__mobile">
-        <RouterLink
-          v-for="item in navItems"
-          :key="item.name"
-          :to="item.path"
-          @click="closeMenu"
-          class="top-nav__mobile-link"
-          active-class="top-nav__mobile-link--active"
-        >
+        <RouterLink v-for="item in navItems" :key="item.name" :to="item.path" @click="closeMenu"
+          class="top-nav__mobile-link" active-class="top-nav__mobile-link--active">
           {{ item.name }}
         </RouterLink>
         <button class="top-nav__mobile-cta">Subscribe</button>
@@ -104,7 +86,6 @@ const navItems = [
 .top-nav__logo {
   display: flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
@@ -113,34 +94,15 @@ const navItems = [
   opacity: 0.8;
 }
 
-.top-nav__logo-icon {
-  width: 36px;
-  height: 36px;
-  background: #1a1a1a;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.top-nav__logo-icon span {
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 17px;
-  line-height: 1;
-}
-
-.top-nav__logo-text {
-  font-weight: 800;
-  font-size: 17px;
-  color: #111827;
-  letter-spacing: -0.01em;
-  display: none;
+.top-nav__logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
 }
 
 @media (min-width: 640px) {
-  .top-nav__logo-text {
-    display: inline;
+  .top-nav__logo-img {
+    height: 34px;
   }
 }
 
@@ -296,14 +258,17 @@ const navItems = [
 .mobile-enter-active {
   transition: all 0.2s ease-out;
 }
+
 .mobile-leave-active {
   transition: all 0.15s ease-in;
 }
+
 .mobile-enter-from,
 .mobile-leave-to {
   opacity: 0;
   transform: translateY(-8px);
 }
+
 .mobile-enter-to,
 .mobile-leave-from {
   opacity: 1;
