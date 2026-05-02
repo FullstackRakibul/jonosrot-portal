@@ -8,7 +8,7 @@ import BottomNav from '@/components/BottomNav.vue'
 <template>
   <div class="min-h-screen bg-white flex flex-col">
     <NavBar />
-    <main class="flex-1 pb-16 md:pb-0">
+    <main class="w-full  pb-16px md:pb-0">
       <RouterView />
     </main>
     <!-- Desktop Footer -->
@@ -18,5 +18,4 @@ import BottomNav from '@/components/BottomNav.vue'
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
