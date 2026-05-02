@@ -2,6 +2,9 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
+import logoBlack from '@/assets/jonosrot-main-b.png'
+import logoWhite from '@/assets/jonosrot-main-w.png'
+
 const router = useRouter()
 const route = useRoute()
 
@@ -11,6 +14,8 @@ interface NavItem {
   path: string
   outlineIcon: string
   filledIcon: string
+  activeImg?: string
+  inactiveImg?: string
 }
 
 const navItems: NavItem[] = [
@@ -18,8 +23,10 @@ const navItems: NavItem[] = [
     id: 'home',
     label: 'Home',
     path: '/',
-    outlineIcon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
-    filledIcon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'
+    outlineIcon: '',
+    filledIcon: '',
+    activeImg: logoBlack,
+    inactiveImg: logoWhite
   },
   {
     id: 'reels',
@@ -123,16 +130,22 @@ const navBarPath = computed(() => {
           @click="navigate(item, index)">
           <!-- Floating circle -->
           <span class="bottom-nav__circle">
-            <!-- Outlined icon (inactive) -->
-            <svg v-if="activeIndex !== index" class="bottom-nav__icon" fill="none" stroke="currentColor"
-              viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path :d="item.outlineIcon" />
-            </svg>
-            <!-- Filled icon (active) -->
-            <svg v-else class="bottom-nav__icon bottom-nav__icon--filled" fill="currentColor" stroke="currentColor"
-              viewBox="0 0 24 24" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
-              <path :d="item.filledIcon" />
-            </svg>
+            <!-- Image-based icon (e.g. Home logo) -->
+            <template v-if="item.activeImg">
+              <img v-if="activeIndex === index" :src="item.activeImg" :alt="item.label" class="bottom-nav__img" />
+              <img v-else :src="item.inactiveImg" :alt="item.label" class="bottom-nav__img bottom-nav__img--inactive" />
+            </template>
+            <!-- SVG icon -->
+            <template v-else>
+              <svg v-if="activeIndex !== index" class="bottom-nav__icon" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path :d="item.outlineIcon" />
+              </svg>
+              <svg v-else class="bottom-nav__icon bottom-nav__icon--filled" fill="currentColor" stroke="currentColor"
+                viewBox="0 0 24 24" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
+                <path :d="item.filledIcon" />
+              </svg>
+            </template>
           </span>
 
           <!-- Label text -->
@@ -286,6 +299,23 @@ const navBarPath = computed(() => {
 .bottom-nav__icon--filled {
   width: 20px;
   height: 20px;
+}
+
+/* ━━━ Image-based icon (logo) ━━━ */
+.bottom-nav__img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  border-radius: 4px;
+  transition: opacity 0.35s ease;
+}
+
+.bottom-nav__img--inactive {
+  opacity: 0.55;
+}
+
+.bottom-nav__btn:not(.is-active):hover .bottom-nav__img {
+  opacity: 0.85;
 }
 
 /* Hover for inactive */
