@@ -9,7 +9,8 @@ interface NavItem {
   id: string
   label: string
   path: string
-  icon: string
+  outlineIcon: string
+  filledIcon: string
 }
 
 const navItems: NavItem[] = [
@@ -17,31 +18,36 @@ const navItems: NavItem[] = [
     id: 'home',
     label: 'Home',
     path: '/',
-    icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'
+    outlineIcon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+    filledIcon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'
   },
   {
     id: 'reels',
     label: 'Reels',
     path: '/reels',
-    icon: 'M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z M4 6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h11V6H4z'
+    outlineIcon: 'M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z M4 6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h11V6H4z',
+    filledIcon: 'M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z M4 6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h11V6H4z'
   },
   {
     id: 'notification',
     label: 'Alerts',
     path: '/notifications',
-    icon: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0'
+    outlineIcon: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0',
+    filledIcon: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0'
   },
   {
     id: 'social',
     label: 'Social',
     path: '/social',
-    icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75'
+    outlineIcon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
+    filledIcon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75'
   },
   {
     id: 'profile',
     label: 'Menu',
     path: '/profile',
-    icon: 'M4 6h16 M4 12h16 M4 18h16'
+    outlineIcon: 'M4 6h16 M4 12h16 M4 18h16',
+    filledIcon: 'M4 6h16 M4 12h16 M4 18h16'
   }
 ]
 
@@ -70,33 +76,30 @@ const navBarPath = computed(() => {
   const itemW = totalW / count
   const cx = itemW * activeIndex.value + itemW / 2
 
-  const notchR = 22
-  const curveW = 14
-  const barTop = 16
+  // Notch sized to hug the 46px circle (radius 23px) with ~3px gap
+  const notchR = 32
+  const curveW = 12
+  const barTop = 18
 
   const leftStart = cx - notchR - curveW
   const leftEnd = cx - notchR
   const rightStart = cx + notchR
   const rightEnd = cx + notchR + curveW
 
-  const r = 14 // top corner radius
+  const r = 10 // top corner radius
 
   return [
-    // Start below top-left corner, arc into the top edge
     `M 0 ${barTop + r}`,
     `A ${r} ${r} 0 0 1 ${r} ${barTop}`,
-    // Straight to notch left
     `H ${leftStart}`,
-    // Left concave curve into notch
-    `C ${leftStart + curveW * 0.7} ${barTop}, ${leftEnd - 4} ${barTop}, ${leftEnd} ${barTop + 10}`,
-    // Arc across the notch
-    `A ${notchR} ${notchR} 0 0 0 ${rightStart} ${barTop + 10}`,
-    // Right concave curve out of notch
-    `C ${rightStart + 4} ${barTop}, ${rightEnd - curveW * 0.7} ${barTop}, ${rightEnd} ${barTop}`,
-    // Straight to top-right corner, arc down
+    // Smooth entry curve into the semicircle
+    `C ${leftStart + curveW * 0.65} ${barTop}, ${leftEnd} ${barTop}, ${leftEnd} ${barTop + 4}`,
+    // Full semicircular arc (sweep the full half-circle)
+    `A ${notchR} ${notchR} 0 0 0 ${rightStart} ${barTop + 4}`,
+    // Smooth exit curve out of the semicircle
+    `C ${rightStart} ${barTop}, ${rightEnd - curveW * 0.65} ${barTop}, ${rightEnd} ${barTop}`,
     `H ${totalW - r}`,
     `A ${r} ${r} 0 0 1 ${totalW} ${barTop + r}`,
-    // Down and across the bottom
     `V 80 H 0 Z`
   ].join(' ')
 })
@@ -118,11 +121,17 @@ const navBarPath = computed(() => {
       <li v-for="(item, index) in navItems" :key="item.id" class="bottom-nav__item">
         <button class="bottom-nav__btn" :class="{ 'is-active': activeIndex === index }" :title="item.label"
           @click="navigate(item, index)">
-          <!-- Floating circle behind active icon -->
+          <!-- Floating circle -->
           <span class="bottom-nav__circle">
-            <svg class="bottom-nav__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path :d="item.icon" />
+            <!-- Outlined icon (inactive) -->
+            <svg v-if="activeIndex !== index" class="bottom-nav__icon" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path :d="item.outlineIcon" />
+            </svg>
+            <!-- Filled icon (active) -->
+            <svg v-else class="bottom-nav__icon bottom-nav__icon--filled" fill="currentColor" stroke="currentColor"
+              viewBox="0 0 24 24" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
+              <path :d="item.filledIcon" />
             </svg>
           </span>
 
@@ -170,7 +179,7 @@ const navBarPath = computed(() => {
   width: 100%;
   height: 100%;
   pointer-events: auto;
-  filter: drop-shadow(0 -3px 12px rgba(116, 110, 110, 0.12));
+  filter: drop-shadow(0 -2px 8px rgba(0, 0, 0, 0.08));
   overflow: visible;
 }
 
@@ -216,18 +225,17 @@ const navBarPath = computed(() => {
   height: 100%;
   position: relative;
   overflow: visible;
-  /* Default: icon+label sit in the middle of the bar */
   justify-content: center;
   gap: 2px;
 }
 
-/* ━━━ Circle (active indicator) ━━━ */
+/* ━━━ Circle (floating indicator) ━━━ */
 .bottom-nav__circle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: transparent;
   flex-shrink: 0;
@@ -239,18 +247,20 @@ const navBarPath = computed(() => {
   z-index: 10;
 }
 
+/* Inactive: no circle visible */
 .bottom-nav__btn:not(.is-active) .bottom-nav__circle {
   transform: translateY(0);
   background: transparent;
   box-shadow: none;
 }
 
+/* Active: white/page-bg floating circle */
 .bottom-nav__btn.is-active .bottom-nav__circle {
-  transform: translateY(-18px);
-  background: #1a1a1a;
+  transform: translateY(-14px);
+  background: #ffffff;
   box-shadow:
-    0 6px 20px rgba(59, 63, 84, 0.30),
-    0 0 0 5px #ffffff;
+    0 4px 16px rgba(0, 0, 0, 0.12),
+    0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 /* ━━━ Icon ━━━ */
@@ -259,19 +269,26 @@ const navBarPath = computed(() => {
   height: 22px;
   transition:
     color 0.35s ease,
-    stroke-width 0.3s ease;
+    opacity 0.3s ease;
 }
 
+/* Inactive: light outline icon */
 .bottom-nav__btn:not(.is-active) .bottom-nav__icon {
   color: rgba(255, 255, 255, 0.55);
-  stroke-width: 1.8;
 }
 
+/* Active: dark filled icon on white circle */
 .bottom-nav__btn.is-active .bottom-nav__icon {
-  color: #ffffff;
-  stroke-width: 2.2;
+  color: #1a1a1a;
 }
 
+/* Filled icon specific tweaks */
+.bottom-nav__icon--filled {
+  width: 20px;
+  height: 20px;
+}
+
+/* Hover for inactive */
 .bottom-nav__btn:not(.is-active):hover .bottom-nav__icon {
   color: rgba(255, 255, 255, 0.85);
 }
@@ -296,10 +313,10 @@ const navBarPath = computed(() => {
 }
 
 .bottom-nav__btn.is-active .bottom-nav__label {
-  color: #ffffff;
-  opacity: 1;
-  transform: translateY(-12px);
-  font-weight: 700;
+  color: #1a1a1a;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.8);
+  pointer-events: none;
 }
 
 /* ━━━ Active press micro-feedback ━━━ */
@@ -308,6 +325,6 @@ const navBarPath = computed(() => {
 }
 
 .bottom-nav__btn.is-active:active .bottom-nav__circle {
-  transform: translateY(-16px) scale(0.93);
+  transform: translateY(-12px) scale(0.97);
 }
 </style>
