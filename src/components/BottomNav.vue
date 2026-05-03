@@ -111,36 +111,72 @@ const navigate = (item: NavItem, index: number) => {
 //     `V 80 H 0 Z`
 //   ].join(' ')
 // })
+// const navBarPath = computed(() => {
+//   const count = navItems.length
+//   const totalW = 500
+//   const itemW = totalW / count
+//   const cx = itemW * activeIndex.value + itemW / 2
+
+//   // Wider notch for generous horizontal spacing around the circle
+//   const notchR = 36
+//   const curveW = 18
+//   const barTop = 15
+
+//   const leftStart = cx - notchR - curveW
+//   const leftEnd = cx - notchR
+//   const rightStart = cx + notchR
+//   const rightEnd = cx + notchR + curveW
+
+//   const r = 12 // top corner radius
+
+//   return [
+//     `M 0 ${barTop + r}`,
+//     `A ${r} ${r} 0 0 1 ${r} ${barTop}`,
+//     `H ${leftStart}`,
+//     // Gentle entry curve — wide and smooth
+//     `C ${leftStart + curveW * 0.6} ${barTop}, ${leftEnd + 4} ${barTop}, ${leftEnd} ${barTop + 6}`,
+//     // Semicircular arc across the notch
+//     `A ${notchR} ${notchR} 0 0 0 ${rightStart} ${barTop + 6}`,
+//     // Gentle exit curve — mirror of entry
+//     `C ${rightStart - 6} ${barTop}, ${rightEnd - curveW * 0.7} ${barTop}, ${rightEnd} ${barTop}`,
+//     `H ${totalW - r}`,
+//     `A ${r} ${r} 0 0 1 ${totalW} ${barTop + r}`,
+//     `V 80 H 0 Z`
+//   ].join(' ')
+// })
 const navBarPath = computed(() => {
   const count = navItems.length
   const totalW = 500
   const itemW = totalW / count
   const cx = itemW * activeIndex.value + itemW / 2
 
-  // Wider notch for generous horizontal spacing around the circle
-  const notchR = 36
-  const curveW = 18
-  const barTop = 15
+  const barTop = 16
+  const cornerR = 18
 
-  const leftStart = cx - notchR - curveW
-  const leftEnd = cx - notchR
-  const rightStart = cx + notchR
-  const rightEnd = cx + notchR + curveW
+  // 👉 THIS MUST MATCH YOUR FLOATING CIRCLE
+  const circleR = 35   // half of 46px
+  const lift = 16      // translateY(-16px) on active circle
 
-  const r = 12 // top corner radius
+  // 👉 This is the KEY: exact notch position
+  const notchCenterY = barTop + circleR - lift
+
+  const left = cx - circleR
+  const right = cx + circleR
 
   return [
-    `M 0 ${barTop + r}`,
-    `A ${r} ${r} 0 0 1 ${r} ${barTop}`,
-    `H ${leftStart}`,
-    // Gentle entry curve — wide and smooth
-    `C ${leftStart + curveW * 0.6} ${barTop}, ${leftEnd + 4} ${barTop}, ${leftEnd} ${barTop + 6}`,
-    // Semicircular arc across the notch
-    `A ${notchR} ${notchR} 0 0 0 ${rightStart} ${barTop + 6}`,
-    // Gentle exit curve — mirror of entry
-    `C ${rightStart - 6} ${barTop}, ${rightEnd - curveW * 0.7} ${barTop}, ${rightEnd} ${barTop}`,
-    `H ${totalW - r}`,
-    `A ${r} ${r} 0 0 1 ${totalW} ${barTop + r}`,
+    `M 0 ${barTop + cornerR}`,
+    `A ${cornerR} ${cornerR} 0 0 1 ${cornerR} ${barTop}`,
+
+    // straight to notch
+    `H ${left}`,
+
+    // 👉 PERFECT circular cut
+    `A ${circleR} ${circleR} 0 0 0 ${right} ${barTop}`,
+
+    // continue
+    `H ${totalW - cornerR}`,
+    `A ${cornerR} ${cornerR} 0 0 1 ${totalW} ${barTop + cornerR}`,
+
     `V 80 H 0 Z`
   ].join(' ')
 })
@@ -234,6 +270,15 @@ const navBarPath = computed(() => {
   transition: d 0.5s cubic-bezier(0.3, 0, 0.2, 1);
 }
 
+.icon-wrapper {
+  position: absolute;
+  top: -18px;
+  /* lift it above the curve */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
 /* ━━━ Nav Items Grid ━━━ */
 .bottom-nav__items {
   position: absolute;
@@ -303,7 +348,7 @@ const navBarPath = computed(() => {
 
 /* Active: white/page-bg floating circle */
 .bottom-nav__btn.is-active .bottom-nav__circle {
-  transform: translateY(-14px);
+  transform: translateY(-18px);
   background: #ffffff;
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.12),
